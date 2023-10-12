@@ -1,0 +1,89 @@
+/*---------------------------------------------------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  11
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format    ascii;
+    class     dictionary;
+    object    blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+ConvertToMeters 0.001;    // mm to m, the length unit of this file is given as mm
+
+vertices                  // (x, y, z) with unit of mm
+(
+    (0.0 0.0 -0.50)       // 1st corner (bottom left),  backside
+    (2000.0 0.0 -0.50)    // 2nd corner (bottom right), backside
+    (2000.0 1000 -0.50)   // 3rd corner (top right),    backside
+    (0.0 1000 -0.50)      // 4th corner (top right),    backside
+    
+    (0.0 0.0 0.50)        // 5th corner (bottom left),  frontside
+    (2000.0 0.0 0.50)     // 6th corner (bottom right), frontside
+    (2000.0 1000 0.50)    // 7th corner (top right),    frontside
+    (0.0 1000 0.50)       // 8th corner (top right),    frontside   
+);
+
+paramY                    // parameter
+(
+    (0.5 0.5 1)           // 50% of y-direction, 30 % of cells, expansion = 1 
+    (0.5 0.5 1)           // 50% of y-direction, 30 % of cells, expansion = 1 
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) // index of vertices
+    (18 9 1)              // total cell numbers of x, y, z-direction
+    simpleGrading (1.0 $paramY 1.0)
+);
+
+boundary                  // Boundary Condition nodes
+(
+    inlet
+    {
+        type patch;
+        faces
+        (
+            (0 3 7 4)     // node index number [-]
+        );
+    }
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (1 2 6 5)     // node index number [-]
+        );
+    }
+    upperWall
+    {
+        type wall;
+        faces
+        (
+            (3 2 6 7)     // node index number [-]
+        );
+    }
+    lowerWall
+    {
+        type wall;
+        faces
+        (
+            (0 1 5 4)     // node index number [-]
+        );
+    }
+    frontAndBack
+    {
+        type empty;
+        faces
+        (
+            (4 5 6 7)     // node index number [-]
+            (0 1 2 3)     // node index number [-]
+        );
+    }
+);
+
+// ************************************************************************* //

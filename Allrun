@@ -1,0 +1,16 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# Set application name
+application="$(getApplication)"
+
+runApplication blockMesh -dict /home/analysis/FluidAnalysis/calculation/uniform/parallel
+runApplication decomposePar   # added for parallel
+runParallel $(getApplication) # added for parallel
+runApplication reconstructPar # added for parallel
+#runApplication $application
+
+#------------------------------------------------------------------------------
